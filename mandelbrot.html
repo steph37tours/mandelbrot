@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <h1>Mandelbrot</h1>
+        <canvas id="mon_canvas" width="540" height="480" style="border: dashed 1px #444;"></canvas>
+
+        <script type="text/javascript" >
+            var c = document.getElementById("mon_canvas");
+            var ctx = c.getContext("2d");
+
+            var minX = -2.1;
+            var maxX = 0.6;
+            var minY = -1.2;
+            var maxY = 1.2;
+            var c_r = 0.0, c_i = 0.0, z_r = 0.0, z_i = 0.0, tmp = 0.0, I = 0.0;
+            var iteration_max = 50;
+
+            var zoom = 200;
+            // on calcule la taille de l'image :
+            var image_x = (maxX - minX) * zoom;
+            var image_y = (maxY - minY) * zoom;
+            //donc du canvas
+            var canvasData = ctx.getImageData(0, 0, image_x, image_y);
+            var canvasWidth = image_x;
+            
+            // these are for colorcanvasWidcanvasWidththing the image
+//            var mr0 = 0;
+//            var mg0 = 0;
+//            var mb0 = 0;
+//            while (mr0 == mg0 || mr0 == mb0 || mg0 == mb0)
+//            {image_x
+//                mr0 = Math.pow(2, Math.ceil(Math.random() * 3 + 3));
+//                mg0 = Math.pow(2, Math.ceil(Math.random() * 3 + 3));
+//                mb0 = Math.pow(2, Math.ceil(Math.random() * 3 + 3));
+//            }
+//            var mr1 = 256 / mr0;
+//            var mg1 = 256 / mg0;
+//            var mb1 = 256 / mb0;
+
+
+            for (var x = 0; x < image_x; x++) {
+
+                for (var y = 0; y < image_y; y++) {
+
+
+                    //c_r = minX + (maxX - minX) / 100 * x ;
+                    // c_r est la partie réelle de C; elle est égale à la valeur de X courante; de -2,4 au départ à 2,4 à l'arrivée.
+                    c_r = x / zoom + minX
+                    //c_i = minY + (maxY - minY) / 100 * y ;
+                    c_i = y / zoom + minY
+                    // c_i est la partie imaginaire de C; elle est égale à la valeur courante de Y.
+                    z_r = 0.0;
+                    z_i = 0.0;
+
+                    a = 0;
+                    do {
+
+                        tmp = z_r;
+
+                        z_r = z_r * z_r - z_i * z_i + c_r;
+
+                        z_i = 2 * tmp * z_i + c_i;
+
+
+                        a++;
+
+                    } while (((z_r * z_r + z_i * z_i) < 4.0) && (a < iteration_max)) //Arrêt si le module de Z dépasse 4. Même si le pointeur d'exploration a n'a pas atteint la valeur 15.
+
+    
+                    drawPixel(x,y,210,a*255/50,a*255/50,a*255/50);
+                    
+
+                }
+
+            }
+
+            //on trace l'image entière à la fin
+            updateCanvas();
+            
+            var imgData = ctx.getImageData(10, 10, 50, 50);
+            ctx.putImageData(imgData, image_x, image_y);
+
+
+            function drawPixel(x, y, r, g, b, a) {
+                var index = (x + y * canvasWidth) * 4;
+
+                canvasData.data[index + 0] = r;
+                canvasData.data[index + 1] = g;
+                canvasData.data[index + 2] = b;
+                canvasData.data[index + 3] = a;
+            }
+
+            function updateCanvas() {
+                ctx.putImageData(canvasData, 0, 0);
+            }
+
+
+            // On renvoie un nombre aléatoire entre une valeur min (incluse) 
+            // et une valeur max (exclue)
+            function getRandomArbitrary(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+        </script>
+    </body>
+
+</html>
